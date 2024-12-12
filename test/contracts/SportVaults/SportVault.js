@@ -259,13 +259,9 @@ contract('SportsAMM', (accounts) => {
 			{ from: owner }
 		);
 		await StakingThales.setAddresses(
-			SNXRewards.address,
 			second,
 			second,
 			SportsAMM.address,
-			second,
-			second,
-			second,
 			second,
 			second,
 			second,
@@ -475,9 +471,6 @@ contract('SportsAMM', (accounts) => {
 		await Thales.transfer(firstLiquidityProvider, toUnit('1000000'), { from: owner });
 		await Thales.approve(SportAMMLiquidityPool.address, toUnit('1000000'), {
 			from: firstLiquidityProvider,
-		});
-		await SportAMMLiquidityPool.setWhitelistedAddresses([firstLiquidityProvider], true, {
-			from: owner,
 		});
 		await SportAMMLiquidityPool.deposit(toUnit(100), { from: firstLiquidityProvider });
 		await SportAMMLiquidityPool.start({ from: owner });
@@ -876,14 +869,14 @@ contract('SportsAMM', (accounts) => {
 			console.log('volume second is:' + volume / 1e18);
 		});
 
-		it('If round is positive, send share to SafeBox', async() => {
+		it('If round is positive, send share to SafeBox', async () => {
 			const AMOUNT = 50;
-			
+
 			await vault.deposit(toUnit(500), { from: first });
 			await vault.startVault({ from: owner });
 
 			await Thales.transfer(vault.address, toUnit(AMOUNT), {
-				from: first
+				from: first,
 			});
 
 			const safeBoxImpact = await vault.safeBoxImpact();
@@ -898,7 +891,10 @@ contract('SportsAMM', (accounts) => {
 			let safeBoxBalanceAfterClosingRound = await Thales.balanceOf(safeBox);
 			console.log('safeBoxBalanceAfterClosingRound ' + safeBoxBalanceAfterClosingRound / 1e18);
 
-			assert.equal((Number(startSafeBoxBalance / 1e18) + Number(AMOUNT * (safeBoxImpact / 1e18))).toFixed(4), (safeBoxBalanceAfterClosingRound / 1e18).toFixed(4));
+			assert.equal(
+				(Number(startSafeBoxBalance / 1e18) + Number(AMOUNT * (safeBoxImpact / 1e18))).toFixed(4),
+				(safeBoxBalanceAfterClosingRound / 1e18).toFixed(4)
+			);
 		});
 	});
 });

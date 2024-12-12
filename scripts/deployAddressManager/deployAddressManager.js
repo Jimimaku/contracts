@@ -47,6 +47,18 @@ async function main() {
 		network = 'polygon';
 	}
 
+	if (networkObj.chainId == 168587773) {
+		networkObj.name = 'blastSepolia';
+		network = 'blastSepolia';
+		proxySUSD = getTargetAddress('ExoticUSD', network);
+	}
+
+	if (networkObj.chainId == 11155420) {
+		networkObj.name = 'optimisticSepolia';
+		network = 'optimisticSepolia';
+		proxySUSD = getTargetAddress('ExoticUSD', network);
+	}
+
 	let accounts = await ethers.getSigners();
 	let owner = accounts[0];
 

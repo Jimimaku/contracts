@@ -201,7 +201,7 @@ contract('ParlayAMM', (accounts) => {
 	let safeBoxImpact = toUnit('0.02');
 	let minUSDAmount = '10';
 	let maxSupportedAmount = '20000';
-	let maxSupportedOdd = '0.005';
+	let maxSupportedOdd = '0.002';
 
 	const usdcQuantity = toBN(10000 * 1e6); //100 USDC
 	let parlayMarkets = [];
@@ -298,13 +298,9 @@ contract('ParlayAMM', (accounts) => {
 			{ from: owner }
 		);
 		await StakingThales.setAddresses(
-			SNXRewards.address,
 			second,
 			second,
 			SportsAMM.address,
-			second,
-			second,
-			second,
 			second,
 			second,
 			second,
@@ -557,7 +553,7 @@ contract('ParlayAMM', (accounts) => {
 			parlayAMMfee,
 			safeBoxImpact,
 			toUnit(0.05),
-			toUnit(1860),
+			toUnit(5860),
 			{
 				from: owner,
 			}
@@ -644,9 +640,6 @@ contract('ParlayAMM', (accounts) => {
 		await Thales.approve(SportAMMLiquidityPool.address, toUnit('10000000'), {
 			from: firstLiquidityProvider,
 		});
-		await SportAMMLiquidityPool.setWhitelistedAddresses([firstLiquidityProvider], true, {
-			from: owner,
-		});
 		await SportAMMLiquidityPool.deposit(toUnit(100000), { from: firstLiquidityProvider });
 		await SportAMMLiquidityPool.start({ from: owner });
 		await SportAMMLiquidityPool.setDefaultLiquidityProvider(defaultLiquidityProvider, {
@@ -697,9 +690,6 @@ contract('ParlayAMM', (accounts) => {
 		await Thales.transfer(firstParlayAMMLiquidityProvider, toUnit('10000000'), { from: owner });
 		await Thales.approve(ParlayAMMLiquidityPool.address, toUnit('10000000'), {
 			from: firstParlayAMMLiquidityProvider,
-		});
-		await ParlayAMMLiquidityPool.setWhitelistedAddresses([firstParlayAMMLiquidityProvider], true, {
-			from: owner,
 		});
 		await ParlayAMMLiquidityPool.deposit(toUnit(100000), { from: firstParlayAMMLiquidityProvider });
 		await ParlayAMMLiquidityPool.start({ from: owner });
@@ -916,6 +906,12 @@ contract('ParlayAMM', (accounts) => {
 				parlayPositions,
 				totalSUSDToPay
 			);
+
+			console.log('sUSDAfterFees ' + result[0] / 1e18);
+			console.log('totalAmount: ' + result[1] / 1e18);
+			console.log('total quote ' + result[2] / 1e18);
+			console.log('result[3]: ' + result[3]);
+			console.log('result[4]: ' + result[4]);
 			let buyParlayTX = await ParlayAMM.buyFromParlay(
 				parlayMarketsAddress,
 				parlayPositions,
@@ -925,7 +921,7 @@ contract('ParlayAMM', (accounts) => {
 				ZERO_ADDRESS,
 				{ from: first }
 			);
-			// console.log("event: \n", buyParlayTX.logs[0]);
+			console.log('event: \n', buyParlayTX.logs[0]);
 
 			assert.eventEqual(buyParlayTX.logs[2], 'ParlayMarketCreated', {
 				account: first,

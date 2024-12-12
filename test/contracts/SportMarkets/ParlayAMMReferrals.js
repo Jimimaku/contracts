@@ -300,13 +300,9 @@ contract('ParlayAMM', (accounts) => {
 			{ from: owner }
 		);
 		await StakingThales.setAddresses(
-			SNXRewards.address,
 			second,
 			second,
 			SportsAMM.address,
-			second,
-			second,
-			second,
 			second,
 			second,
 			second,
@@ -656,9 +652,6 @@ contract('ParlayAMM', (accounts) => {
 		await Thales.approve(SportAMMLiquidityPool.address, toUnit('10000000'), {
 			from: firstLiquidityProvider,
 		});
-		await SportAMMLiquidityPool.setWhitelistedAddresses([firstLiquidityProvider], true, {
-			from: owner,
-		});
 		await SportAMMLiquidityPool.deposit(toUnit(100000), { from: firstLiquidityProvider });
 		await SportAMMLiquidityPool.start({ from: owner });
 		await SportAMMLiquidityPool.setDefaultLiquidityProvider(defaultLiquidityProvider, {
@@ -713,9 +706,6 @@ contract('ParlayAMM', (accounts) => {
 		await Thales.transfer(firstParlayAMMLiquidityProvider, toUnit('10000000'), { from: owner });
 		await Thales.approve(ParlayAMMLiquidityPool.address, toUnit('10000000'), {
 			from: firstParlayAMMLiquidityProvider,
-		});
-		await ParlayAMMLiquidityPool.setWhitelistedAddresses([firstParlayAMMLiquidityProvider], true, {
-			from: owner,
 		});
 		await ParlayAMMLiquidityPool.deposit(toUnit(100000), { from: firstParlayAMMLiquidityProvider });
 		await ParlayAMMLiquidityPool.start({ from: owner });

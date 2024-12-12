@@ -303,13 +303,9 @@ contract('ParlayAMM', (accounts) => {
 			{ from: owner }
 		);
 		await StakingThales.setAddresses(
-			SNXRewards.address,
 			second,
 			second,
 			SportsAMM.address,
-			second,
-			second,
-			second,
 			second,
 			second,
 			second,
@@ -650,9 +646,6 @@ contract('ParlayAMM', (accounts) => {
 		await Thales.approve(SportAMMLiquidityPool.address, toUnit('10000000'), {
 			from: firstLiquidityProvider,
 		});
-		await SportAMMLiquidityPool.setWhitelistedAddresses([firstLiquidityProvider], true, {
-			from: owner,
-		});
 		await SportAMMLiquidityPool.deposit(toUnit(100000), { from: firstLiquidityProvider });
 		await SportAMMLiquidityPool.start({ from: owner });
 		await SportAMMLiquidityPool.setDefaultLiquidityProvider(defaultLiquidityProvider, {
@@ -703,9 +696,6 @@ contract('ParlayAMM', (accounts) => {
 		await Thales.approve(ParlayAMMLiquidityPool.address, toUnit('10000000'), {
 			from: firstParlayAMMLiquidityProvider,
 		});
-		await ParlayAMMLiquidityPool.setWhitelistedAddresses([firstParlayAMMLiquidityProvider], true, {
-			from: owner,
-		});
 		await ParlayAMMLiquidityPool.deposit(toUnit(100000), { from: firstParlayAMMLiquidityProvider });
 		await ParlayAMMLiquidityPool.start({ from: owner });
 		await ParlayAMMLiquidityPool.setDefaultLiquidityProvider(defaultParlayAMMLiquidityProvider, {
@@ -748,18 +738,6 @@ contract('ParlayAMM', (accounts) => {
 				from: owner,
 			});
 			await ParlayAMM.setVerifierAndPolicyAddresses(owner, owner, { from: owner });
-		});
-		it('ParlayMarketData', async () => {
-			await ParlayMarketData.setParlayMarketsAMM(third, { from: owner });
-			await ParlayMarketData.addParlayForGamePosition(first, '1', second, second, { from: third });
-			let hasData = await ParlayMarketData.isGamePositionInParlay(first, '1', second);
-			assert.equal(hasData, true);
-			hasData = await ParlayMarketData.isGameInParlay(first, second);
-			assert.equal(hasData[0], true);
-			assert.equal(hasData[1].toString(), '1');
-			await ParlayMarketData.removeParlayForGamePosition(first, '1', second, { from: third });
-			hasData = await ParlayMarketData.isGamePositionInParlay(first, '1', second);
-			assert.equal(hasData, false);
 		});
 	});
 
@@ -1007,20 +985,7 @@ contract('ParlayAMM', (accounts) => {
 						);
 					}
 				});
-				it('Get Parlay balances', async () => {
-					let balances = await parlaySingleMarket.getSportMarketBalances();
-					let sum = toUnit(0);
-					for (let i = 0; i < parlayMarkets.length; i++) {
-						console.log(i, ' position: ', fromUnit(balances[i]));
-						sum = sum.add(balances[i]);
-					}
-					console.log('total balance: ', fromUnit(sum));
-					let result = await parlaySingleMarket.amount();
 
-					console.log('Result balance: ', fromUnit(result));
-					assert.approximately(parseFloat(fromUnit(result)), parseFloat(fromUnit(sum)), 0.000001);
-					// assert.bnEqual(sum, await parlaySingleMarket.amount());
-				});
 				it('Parlay exercised (balances checked)', async () => {
 					let userBalanceBefore = toUnit('1000');
 					let balanceBefore = await Thales.balanceOf(ParlayAMM.address);

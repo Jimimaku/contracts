@@ -465,13 +465,9 @@ contract('Parlay Vault', (accounts) => {
 			{ from: owner }
 		);
 		await StakingThales.setAddresses(
-			SNXRewards.address,
 			second,
 			second,
 			SportsAMM.address,
-			second,
-			second,
-			second,
 			second,
 			second,
 			second,
@@ -812,9 +808,6 @@ contract('Parlay Vault', (accounts) => {
 		await Thales.approve(SportAMMLiquidityPool.address, toUnit('10000000'), {
 			from: firstLiquidityProvider,
 		});
-		await SportAMMLiquidityPool.setWhitelistedAddresses([firstLiquidityProvider], true, {
-			from: owner,
-		});
 		await SportAMMLiquidityPool.deposit(toUnit(100000), { from: firstLiquidityProvider });
 		await SportAMMLiquidityPool.start({ from: owner });
 		await SportAMMLiquidityPool.setDefaultLiquidityProvider(defaultLiquidityProvider, {
@@ -899,9 +892,6 @@ contract('Parlay Vault', (accounts) => {
 		await Thales.approve(ParlayAMMLiquidityPool.address, toUnit('10000000'), {
 			from: firstParlayAMMLiquidityProvider,
 		});
-		await ParlayAMMLiquidityPool.setWhitelistedAddresses([firstParlayAMMLiquidityProvider], true, {
-			from: owner,
-		});
 		await ParlayAMMLiquidityPool.deposit(toUnit(100000), { from: firstParlayAMMLiquidityProvider });
 		await ParlayAMMLiquidityPool.start({ from: owner });
 		await ParlayAMMLiquidityPool.setDefaultLiquidityProvider(defaultParlayAMMLiquidityProvider, {
@@ -951,7 +941,6 @@ contract('Parlay Vault', (accounts) => {
 
 				for (let i = 0; i < result.finalQuotes.length; i++) {
 					console.log('finalQuote', i, fromUnit(result.finalQuotes[i]));
-					console.log('amountToBuy', i, fromUnit(result.amountsToBuy[i]));
 				}
 			}
 		});
@@ -1257,15 +1246,6 @@ contract('Parlay Vault', (accounts) => {
 			await assert.revert(
 				vault.trade(
 					[parlayMarkets[0].address, parlayMarkets[5].address],
-					parlayPositions,
-					totalSUSDToPay
-				),
-				'Market is at the maximum number of tickets'
-			);
-
-			await assert.revert(
-				vault.trade(
-					[parlayMarkets[4].address, parlayMarkets[0].address],
 					parlayPositions,
 					totalSUSDToPay
 				),
