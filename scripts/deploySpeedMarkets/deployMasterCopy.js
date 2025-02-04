@@ -44,6 +44,17 @@ async function main() {
 		network = 'baseMainnet';
 	}
 
+	if (networkObj.chainId == 168587773) {
+		networkObj.name = 'blastSepolia';
+		network = 'blastSepolia';
+		proxySUSD = getTargetAddress('ExoticUSD', network);
+	}
+
+	if (networkObj.chainId == 11155420) {
+		networkObj.name = 'optimisticSepolia';
+		network = 'optimisticSepolia';
+	}
+
 	console.log('Account is:' + owner.address);
 	console.log('Network name:' + network);
 

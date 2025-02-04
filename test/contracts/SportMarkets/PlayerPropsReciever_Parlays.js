@@ -901,14 +901,14 @@ contract('PlayerProps', (accounts) => {
 		let nfl_sgp_fee = toUnit(0.9);
 		let nhl_sgp_fee = toUnit(0.85);
 
-		await ParlayAMM.setSgpFeePerCombination(9004, 0, 10002, nba_sgp_fee, { from: owner });
-		await ParlayAMM.setSgpFeePerCombination(9004, 10002, 10001, nba_sgp_fee, { from: owner });
-		await ParlayAMM.setSgpFeePerCombination(9016, 0, 10002, soccer_sgp_fee, { from: owner });
-		await ParlayAMM.setSgpFeePerCombination(9016, 10001, 10002, soccer_sgp_fee, { from: owner });
-		await ParlayAMM.setSgpFeePerCombination(9002, 0, 10002, nfl_sgp_fee, { from: owner });
-		await ParlayAMM.setSgpFeePerCombination(9002, 10001, 10002, nfl_sgp_fee, { from: owner });
-		await ParlayAMM.setSgpFeePerCombination(9007, 0, 10002, nhl_sgp_fee, { from: owner });
-		await ParlayAMM.setSgpFeePerCombination(9007, 10001, 10002, nhl_sgp_fee, { from: owner });
+		// await ParlayAMM.setSgpFeePerCombination(9004, 0, 10002, nba_sgp_fee, { from: owner });
+		// await ParlayAMM.setSgpFeePerCombination(9004, 10002, 10001, nba_sgp_fee, { from: owner });
+		// await ParlayAMM.setSgpFeePerCombination(9016, 0, 10002, soccer_sgp_fee, { from: owner });
+		// await ParlayAMM.setSgpFeePerCombination(9016, 10001, 10002, soccer_sgp_fee, { from: owner });
+		// await ParlayAMM.setSgpFeePerCombination(9002, 0, 10002, nfl_sgp_fee, { from: owner });
+		// await ParlayAMM.setSgpFeePerCombination(9002, 10001, 10002, nfl_sgp_fee, { from: owner });
+		// await ParlayAMM.setSgpFeePerCombination(9007, 0, 10002, nhl_sgp_fee, { from: owner });
+		// await ParlayAMM.setSgpFeePerCombination(9007, 10001, 10002, nhl_sgp_fee, { from: owner });
 
 		await Thales.approve(ParlayAMM.address, toUnit('1000'), { from: first });
 		await Thales.approve(ParlayAMM.address, toUnit('1000'), { from: second });
@@ -992,9 +992,6 @@ contract('PlayerProps', (accounts) => {
 		await Thales.approve(SportAMMLiquidityPool.address, toUnit('10000000'), {
 			from: firstLiquidityProvider,
 		});
-		await SportAMMLiquidityPool.setWhitelistedAddresses([firstLiquidityProvider], true, {
-			from: owner,
-		});
 		await SportAMMLiquidityPool.deposit(toUnit(100000), { from: firstLiquidityProvider });
 		await SportAMMLiquidityPool.start({ from: owner });
 		await SportAMMLiquidityPool.setDefaultLiquidityProvider(defaultLiquidityProvider, {
@@ -1045,9 +1042,6 @@ contract('PlayerProps', (accounts) => {
 		await Thales.transfer(firstParlayAMMLiquidityProvider, toUnit('10000000'), { from: owner });
 		await Thales.approve(ParlayAMMLiquidityPool.address, toUnit('10000000'), {
 			from: firstParlayAMMLiquidityProvider,
-		});
-		await ParlayAMMLiquidityPool.setWhitelistedAddresses([firstParlayAMMLiquidityProvider], true, {
-			from: owner,
 		});
 		await ParlayAMMLiquidityPool.deposit(toUnit(100000), { from: firstParlayAMMLiquidityProvider });
 		await ParlayAMMLiquidityPool.start({ from: owner });

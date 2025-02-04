@@ -229,13 +229,9 @@ contract('SportsVauchers', (accounts) => {
 			{ from: owner }
 		);
 		await StakingThales.setAddresses(
-			SNXRewards.address,
 			second,
 			second,
 			SportsAMM.address,
-			second,
-			second,
-			second,
 			second,
 			second,
 			second,
@@ -481,9 +477,6 @@ contract('SportsVauchers', (accounts) => {
 		await Thales.transfer(firstLiquidityProvider, toUnit('1000000'), { from: owner });
 		await Thales.approve(SportAMMLiquidityPool.address, toUnit('1000000'), {
 			from: firstLiquidityProvider,
-		});
-		await SportAMMLiquidityPool.setWhitelistedAddresses([firstLiquidityProvider], true, {
-			from: owner,
 		});
 		await SportAMMLiquidityPool.deposit(toUnit(100), { from: firstLiquidityProvider });
 		await SportAMMLiquidityPool.start({ from: owner });

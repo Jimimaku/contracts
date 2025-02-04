@@ -850,30 +850,6 @@
         "type": "address"
       }
     ],
-    "name": "exercisableSportPositionsInParlay",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "isExercisable",
-        "type": "bool"
-      },
-      {
-        "internalType": "address[]",
-        "name": "exercisableMarkets",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_parlayMarket",
-        "type": "address"
-      }
-    ],
     "name": "exerciseParlay",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -913,45 +889,6 @@
     "name": "expireMarkets",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tag1",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tag2_1",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tag2_2",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "position1",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "position2",
-        "type": "uint256"
-      }
-    ],
-    "name": "getSgpFeePerCombination",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "sgpFee",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -1306,6 +1243,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "parlaysWithNewFormat",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "paused",
     "outputs": [
@@ -1326,30 +1282,6 @@
         "internalType": "address",
         "name": "",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_parlayMarket",
-        "type": "address"
-      }
-    ],
-    "name": "resolvableSportPositionsInParlay",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "isAnyResolvable",
-        "type": "bool"
-      },
-      {
-        "internalType": "address[]",
-        "name": "resolvableMarkets",
-        "type": "address[]"
       }
     ],
     "stateMutability": "view",
@@ -1479,6 +1411,30 @@
       }
     ],
     "name": "riskPerGameCombination",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "riskPerMarketAndPosition",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1759,44 +1715,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256[]",
-        "name": "tag1",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tag2_1",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tag2_2",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "position_1",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "position_2",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "fee",
-        "type": "uint256"
-      }
-    ],
-    "name": "setSGPFeePerPosition",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "_address",
         "type": "address"
@@ -1808,34 +1726,6 @@
       }
     ],
     "name": "setSafeBoxFeePerAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tag1",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tag2_1",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tag2_2",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "fee",
-        "type": "uint256"
-      }
-    ],
-    "name": "setSgpFeePerCombination",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1924,6 +1814,19 @@
       }
     ],
     "name": "triggerResolvedEvent",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "_parlayMarkets",
+        "type": "address[]"
+      }
+    ],
+    "name": "withdrawParlays",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
