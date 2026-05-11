@@ -816,9 +816,19 @@
             "type": "bytes[]"
           },
           {
+            "internalType": "bool",
+            "name": "isStrikeTimeEnabled",
+            "type": "bool"
+          },
+          {
             "internalType": "uint64",
             "name": "minDelta",
             "type": "uint64"
+          },
+          {
+            "internalType": "uint64[]",
+            "name": "allowedDeltas",
+            "type": "uint64[]"
           }
         ],
         "internalType": "struct SpeedMarketsAMMCreator.CreateFromPendingSpeedParams",

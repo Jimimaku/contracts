@@ -90,7 +90,9 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
     struct CreateFromPendingSpeedParams {
         ISpeedMarketsAMM.OracleSource oracleSource;
         bytes[] priceUpdateData;
+        bool isStrikeTimeEnabled;
         uint64 minDelta;
+        uint64[] allowedDeltas;
     }
 
     uint64 public maxCreationDelay;
@@ -149,7 +151,9 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
     /// @param _params Struct containing all parameters required to process pending markets:
     /// - `oracleSource`: The oracle source to use for price updates (e.g., Pyth, Chainlink).
     /// - `priceUpdateData`: The oracle price update payloads for all supported assets.
+    /// - `isStrikeTimeEnabled`: Flag indicating whether strike time is supported.
     /// - `minDelta`: The minimum allowed time delta for pending market creation.
+    /// - `allowedDeltas`: Array of allowed delta times.
     function createFromPendingSpeedMarkets(CreateFromPendingSpeedParams calldata _params)
         external
         payable
@@ -184,7 +188,7 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
                 continue;
             }
 
-            if (_isInvalidDelta(pendingSpeedMarket.strikeTime, pendingSpeedMarket.delta, _params.minDelta)) {
+            if (_isInvalidDelta(pendingSpeedMarket.strikeTime, pendingSpeedMarket.delta, _params)) {
                 requestIdToMarket[requestId] = DEAD_ADDRESS;
                 emit LogError("invalid delta/strike time", pendingSpeedMarket, requestId);
                 continue;
@@ -441,11 +445,23 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
     function _isInvalidDelta(
         uint64 _strikeTime,
         uint64 _delta,
-        uint64 _minDelta
+        CreateFromPendingSpeedParams memory _params
     ) internal view returns (bool) {
-        if (_strikeTime == 0) return _delta < _minDelta;
-        if (_strikeTime <= block.timestamp) return true;
-        return (_strikeTime - block.timestamp) < _minDelta;
+        if (_strikeTime == 0) {
+            if (_params.allowedDeltas.length > 0) {
+                for (uint i = 0; i < _params.allowedDeltas.length; i++) {
+                    if (_delta == _params.allowedDeltas[i]) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return _delta < _params.minDelta;
+        } else {
+            if (!_params.isStrikeTimeEnabled) return true;
+            if (_strikeTime <= block.timestamp) return true;
+            return (_strikeTime - block.timestamp) < _params.minDelta;
+        }
     }
 
     function _isStalePrice(
