@@ -990,6 +990,17 @@ contract('SpeedMarketsAMMCreator', (accounts) => {
 			assert.isTrue([pending_1.user, pending_2.user].includes(user), 'Should not remove user');
 			assert.isFalse([pending_1.user, pending_2.user].includes(user_2), 'Should remove user_2');
 
+			const allPending = await creator.getPendingSpeedMarkets();
+			assert.equal(allPending.length, 2, 'Should return 2 pending markets');
+			assert.isTrue(
+				allPending.some((pending) => pending.user === user),
+				'Should return existing user'
+			);
+			assert.isTrue(
+				allPending.some((pending) => pending.user === user_3),
+				'Should return existing user 3'
+			);
+
 			await creator.deletePendingSpeedMarkets(true, [], { from: user });
 			pendingSize = Number(await creator.getPendingSpeedMarketsSize());
 			assert.equal(pendingSize, 0, 'Should remove all pending speed markets!');
