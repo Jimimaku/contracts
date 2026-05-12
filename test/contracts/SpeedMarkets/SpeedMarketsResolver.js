@@ -203,7 +203,7 @@ contract('SpeedMarketsAMMResolver', (accounts) => {
 			await exoticUSD.approve(speedMarketsAMM.address, toUnit(100), { from: user });
 			await creator.addPendingSpeedMarket(pendingSpeedParams, { from: user });
 			await creator.createFromPendingSpeedMarkets(
-				[oracleSource.Pyth, [priceFeedUpdateData], false, 0, []],
+				[oracleSource.Pyth, [priceFeedUpdateData], 0, []],
 				{
 					value: fee,
 					from: user,
@@ -252,7 +252,7 @@ contract('SpeedMarketsAMMResolver', (accounts) => {
 			await exoticUSD.approve(speedMarketsAMM.address, toUnit(100), { from: user });
 			await creator.addPendingSpeedMarket(pendingSpeedParams, { from: user });
 			await creator.createFromPendingSpeedMarkets(
-				[oracleSource.Chainlink, [unverifiedReport], false, 0, []],
+				[oracleSource.Chainlink, [unverifiedReport], 0, []],
 				{
 					from: user,
 				}

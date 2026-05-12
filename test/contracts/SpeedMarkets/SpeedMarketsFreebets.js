@@ -58,6 +58,7 @@ contract('SpeedMarketsFreebets', (accounts) => {
 			speedMarketsAMMCreator = await Creator.new();
 			await speedMarketsAMMCreator.initialize(owner, addressManager.address);
 			await speedMarketsAMMCreator.setMaxCreationDelay(300); // 5 minutes
+			await speedMarketsAMMCreator.setStrikeTimeEnabled(true);
 
 			// Update address manager with creator
 			await addressManager.setAddressInAddressBook(
@@ -262,7 +263,7 @@ contract('SpeedMarketsFreebets', (accounts) => {
 
 				// Process pending markets through creator
 				await speedMarketsAMMCreator.createFromPendingSpeedMarkets(
-					[oracleSource.Pyth, [priceFeedUpdateData], 0],
+					[oracleSource.Pyth, [priceFeedUpdateData], 0, []],
 					{
 						from: owner,
 						value: fee,
@@ -343,7 +344,7 @@ contract('SpeedMarketsFreebets', (accounts) => {
 				// Whitelist owner and process pending markets
 				await speedMarketsAMMCreator.addToWhitelist(owner, true, { from: owner });
 				await speedMarketsAMMCreator.createFromPendingSpeedMarkets(
-					[oracleSource.Pyth, [freshPriceFeedUpdateData], 0],
+					[oracleSource.Pyth, [freshPriceFeedUpdateData], 0, []],
 					{
 						from: owner,
 						value: fee,
@@ -396,7 +397,7 @@ contract('SpeedMarketsFreebets', (accounts) => {
 				// Whitelist owner and process pending markets
 				await speedMarketsAMMCreator.addToWhitelist(owner, true, { from: owner });
 				await speedMarketsAMMCreator.createFromPendingSpeedMarkets(
-					[oracleSource.Pyth, [freshPriceFeedUpdateData], 0],
+					[oracleSource.Pyth, [freshPriceFeedUpdateData], 0, []],
 					{
 						from: owner,
 						value: fee,
@@ -507,7 +508,7 @@ contract('SpeedMarketsFreebets', (accounts) => {
 				// Whitelist owner and process pending markets
 				await speedMarketsAMMCreator.addToWhitelist(owner, true, { from: owner });
 				await speedMarketsAMMCreator.createFromPendingSpeedMarkets(
-					[oracleSource.Pyth, [freshPriceFeedUpdateData], 0],
+					[oracleSource.Pyth, [freshPriceFeedUpdateData], 0, []],
 					{
 						from: owner,
 						value: fee,
@@ -603,7 +604,7 @@ contract('SpeedMarketsFreebets', (accounts) => {
 				// Whitelist owner and process pending markets
 				await speedMarketsAMMCreator.addToWhitelist(owner, true, { from: owner });
 				await speedMarketsAMMCreator.createFromPendingSpeedMarkets(
-					[oracleSource.Pyth, [freshPriceFeedUpdateData], 0],
+					[oracleSource.Pyth, [freshPriceFeedUpdateData], 0, []],
 					{
 						from: owner,
 						value: fee,
@@ -693,7 +694,7 @@ contract('SpeedMarketsFreebets', (accounts) => {
 				// Whitelist owner and process pending markets
 				await speedMarketsAMMCreator.addToWhitelist(owner, true, { from: owner });
 				await speedMarketsAMMCreator.createFromPendingSpeedMarkets(
-					[oracleSource.Pyth, [freshPriceFeedUpdateData], 0],
+					[oracleSource.Pyth, [freshPriceFeedUpdateData], 0, []],
 					{
 						from: owner,
 						value: fee,
@@ -777,7 +778,7 @@ contract('SpeedMarketsFreebets', (accounts) => {
 				// Whitelist owner and process pending markets
 				await speedMarketsAMMCreator.addToWhitelist(owner, true, { from: owner });
 				await speedMarketsAMMCreator.createFromPendingSpeedMarkets(
-					[oracleSource.Pyth, [freshPriceFeedUpdateData], 0],
+					[oracleSource.Pyth, [freshPriceFeedUpdateData], 0, []],
 					{
 						from: owner,
 						value: fee,
@@ -873,7 +874,7 @@ contract('SpeedMarketsFreebets', (accounts) => {
 				// Whitelist owner and process pending markets
 				await speedMarketsAMMCreator.addToWhitelist(owner, true, { from: owner });
 				await speedMarketsAMMCreator.createFromPendingSpeedMarkets(
-					[oracleSource.Pyth, [freshPriceFeedUpdateData], 0],
+					[oracleSource.Pyth, [freshPriceFeedUpdateData], 0, []],
 					{
 						from: owner,
 						value: fee,

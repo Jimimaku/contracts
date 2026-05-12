@@ -90,7 +90,6 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
     struct CreateFromPendingSpeedParams {
         ISpeedMarketsAMM.OracleSource oracleSource;
         bytes[] priceUpdateData;
-        bool isStrikeTimeEnabled;
         uint64 minDelta;
         uint64[] allowedDeltas;
     }
@@ -105,6 +104,8 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
     mapping(address => bool) public whitelistedAddresses;
 
     mapping(bytes32 => address) public requestIdToMarket;
+
+    bool private _isStrikeTimeEnabled;
 
     receive() external payable {}
 
@@ -125,6 +126,9 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
     }
 
     function _addPendingSpeedMarket(SpeedMarketParams calldata _params) internal returns (bytes32 requestId) {
+        require(pendingSpeedMarkets.length < type(uint8).max, "Max 255 markets");
+        require(_isStrikeTimeEnabled || _params.strikeTime == 0, "Strike time not supported");
+
         PendingSpeedMarket memory pendingSpeedMarket = PendingSpeedMarket(
             msg.sender,
             _params.asset,
@@ -151,7 +155,6 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
     /// @param _params Struct containing all parameters required to process pending markets:
     /// - `oracleSource`: The oracle source to use for price updates (e.g., Pyth, Chainlink).
     /// - `priceUpdateData`: The oracle price update payloads for all supported assets.
-    /// - `isStrikeTimeEnabled`: Flag indicating whether strike time is supported.
     /// - `minDelta`: The minimum allowed time delta for pending market creation.
     /// - `allowedDeltas`: Array of allowed delta times.
     function createFromPendingSpeedMarkets(CreateFromPendingSpeedParams calldata _params)
@@ -300,6 +303,8 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
     }
 
     function _addPendingChainedSpeedMarket(ChainedSpeedMarketParams calldata _params) internal returns (bytes32 requestId) {
+        require(pendingChainedSpeedMarkets.length < type(uint8).max, "Max 255 markets");
+
         PendingChainedSpeedMarket memory pendingChainedSpeedMarket = PendingChainedSpeedMarket(
             msg.sender,
             _params.asset,
@@ -458,7 +463,6 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
             }
             return _delta < _params.minDelta;
         } else {
-            if (!_params.isStrikeTimeEnabled) return true;
             if (_strikeTime <= block.timestamp) return true;
             return (_strikeTime - block.timestamp) < _params.minDelta;
         }
@@ -628,6 +632,12 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
         emit SetMaxCreationDelay(_maxCreationDelay);
     }
 
+    /// @notice Set strike time enabled
+    function setStrikeTimeEnabled(bool _strikeTimeEnabled) external onlyOwner {
+        _isStrikeTimeEnabled = _strikeTimeEnabled;
+        emit SetStrikeTimeEnabled(_strikeTimeEnabled);
+    }
+
     /// @notice adding/removing whitelist address depending on a flag
     /// @param _whitelistAddress address that needed to be whitelisted or removed from WL
     /// @param _flag adding or removing from whitelist (true: add, false: remove)
@@ -653,6 +663,7 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
 
     event SetAddressManager(address _addressManager);
     event SetMaxCreationDelay(uint64 _maxCreationDelay);
+    event SetStrikeTimeEnabled(bool _strikeTimeEnabled);
     event AddedIntoWhitelist(address _whitelistAddress, bool _flag);
 
     event LogError(string _errorMessage, PendingSpeedMarket _pendingSpeedMarket, bytes32 _requestId);
