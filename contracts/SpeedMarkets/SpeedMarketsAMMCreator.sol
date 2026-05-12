@@ -106,6 +106,7 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
     mapping(bytes32 => address) public requestIdToMarket;
 
     bool private _isStrikeTimeEnabled;
+    uint private _maxQueueSize = 255;
 
     receive() external payable {}
 
@@ -126,7 +127,7 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
     }
 
     function _addPendingSpeedMarket(SpeedMarketParams calldata _params) internal returns (bytes32 requestId) {
-        require(pendingSpeedMarkets.length < type(uint8).max, "Max 255 markets");
+        require(pendingSpeedMarkets.length < _maxQueueSize, "Max queue size exceeded");
         require(_isStrikeTimeEnabled || _params.strikeTime == 0, "Strike time not supported");
 
         PendingSpeedMarket memory pendingSpeedMarket = PendingSpeedMarket(
@@ -177,10 +178,10 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
 
         ISpeedMarketsAMM iSpeedMarketsAMM = ISpeedMarketsAMM(contractsAddresses.speedMarketsAMM);
         uint64 maximumPriceDelay = iSpeedMarketsAMM.maximumPriceDelay();
-        uint8 createdSize;
+        uint createdSize;
 
         // process all pending speed markets
-        for (uint8 i = 0; i < pendingSpeedMarkets.length; i++) {
+        for (uint i = 0; i < pendingSpeedMarkets.length; i++) {
             PendingSpeedMarket memory pendingSpeedMarket = pendingSpeedMarkets[i];
             bytes32 requestId = keccak256(abi.encode(pendingSpeedMarket));
 
@@ -303,7 +304,7 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
     }
 
     function _addPendingChainedSpeedMarket(ChainedSpeedMarketParams calldata _params) internal returns (bytes32 requestId) {
-        require(pendingChainedSpeedMarkets.length < type(uint8).max, "Max 255 markets");
+        require(pendingChainedSpeedMarkets.length < _maxQueueSize, "Max queue size exceeded");
 
         PendingChainedSpeedMarket memory pendingChainedSpeedMarket = PendingChainedSpeedMarket(
             msg.sender,
@@ -344,10 +345,10 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
 
         ISpeedMarketsAMM iSpeedMarketsAMM = ISpeedMarketsAMM(contractsAddresses.speedMarketsAMM);
         uint64 maximumPriceDelay = iSpeedMarketsAMM.maximumPriceDelay();
-        uint8 createdSize;
+        uint createdSize;
 
         // process all pending chained speed markets
-        for (uint8 i = 0; i < pendingChainedSpeedMarkets.length; i++) {
+        for (uint i = 0; i < pendingChainedSpeedMarkets.length; i++) {
             PendingChainedSpeedMarket memory pendingChainedSpeedMarket = pendingChainedSpeedMarkets[i];
             bytes32 requestId = keccak256(abi.encode(pendingChainedSpeedMarket));
 
@@ -581,7 +582,7 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
             bytes32 requiredFeedId = iSpeedMarketsAMM.assetToChainlinkId(_asset);
 
             bytes memory unverifiedReport;
-            for (uint8 i = 0; i < _unverifiedReports.length; i++) {
+            for (uint i = 0; i < _unverifiedReports.length; i++) {
                 (, bytes memory reportData) = abi.decode(_unverifiedReports[i], (bytes32[3], bytes));
                 ChainlinkStructs.ReportV3 memory report = abi.decode(reportData, (ChainlinkStructs.ReportV3));
                 if (report.feedId == requiredFeedId) {
@@ -612,6 +613,15 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
         return pendingSpeedMarkets.length;
     }
 
+    /// @notice get pending speed markets data
+    function getPendingSpeedMarkets() external view returns (PendingSpeedMarket[] memory pendingMarkets) {
+        pendingMarkets = new PendingSpeedMarket[](pendingSpeedMarkets.length);
+        for (uint i = 0; i < pendingSpeedMarkets.length; i++) {
+            pendingMarkets[i] = pendingSpeedMarkets[i];
+        }
+        return pendingMarkets;
+    }
+
     /// @notice get length of pending chained speed markets
     function getPendingChainedSpeedMarketsSize() external view returns (uint) {
         return pendingChainedSpeedMarkets.length;
@@ -638,6 +648,12 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
         emit SetStrikeTimeEnabled(_strikeTimeEnabled);
     }
 
+    /// @notice Set max queue size
+    function setMaxQueueSize(uint _maxQueueSizeParam) external onlyOwner {
+        _maxQueueSize = _maxQueueSizeParam;
+        emit SetMaxQueueSize(_maxQueueSizeParam);
+    }
+
     /// @notice adding/removing whitelist address depending on a flag
     /// @param _whitelistAddress address that needed to be whitelisted or removed from WL
     /// @param _flag adding or removing from whitelist (true: add, false: remove)
@@ -658,12 +674,13 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
 
     event AddSpeedMarket(PendingSpeedMarket _pendingSpeedMarket, bytes32 _requestId);
     event AddChainedSpeedMarket(PendingChainedSpeedMarket _pendingChainedSpeedMarket, bytes32 _requestId);
-    event CreateSpeedMarkets(uint _pendingSize, uint8 _createdSize);
+    event CreateSpeedMarkets(uint _pendingSize, uint _createdSize);
     event AmountTransfered(address _destination, address _collateral, uint256 _amount);
 
     event SetAddressManager(address _addressManager);
     event SetMaxCreationDelay(uint64 _maxCreationDelay);
     event SetStrikeTimeEnabled(bool _strikeTimeEnabled);
+    event SetMaxQueueSize(uint _maxQueueSize);
     event AddedIntoWhitelist(address _whitelistAddress, bool _flag);
 
     event LogError(string _errorMessage, PendingSpeedMarket _pendingSpeedMarket, bytes32 _requestId);
