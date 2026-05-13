@@ -8,8 +8,7 @@ jobs:
   build-and-test:
     parallelism: 8
     resource_class: large
-    docker:
-      - image: cimg/node:18.20
+    executor: node/default
     steps:
       - checkout
       - node/install-packages:

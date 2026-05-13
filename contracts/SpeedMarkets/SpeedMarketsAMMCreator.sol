@@ -106,7 +106,7 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
     mapping(bytes32 => address) public requestIdToMarket;
 
     bool private _isStrikeTimeEnabled;
-    uint private _maxQueueSize = 255;
+    uint private _maxQueueSize;
 
     receive() external payable {}
 

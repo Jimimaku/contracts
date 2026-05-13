@@ -153,6 +153,7 @@ contract('SpeedMarketsAMMResolver', (accounts) => {
 		await creator.initialize(owner, addressManager.address);
 		await creator.setAddressManager(addressManager.address);
 		await creator.setMaxCreationDelay(5); // 5s
+		await creator.setMaxQueueSize(255);
 		await creator.addToWhitelist(user, true);
 
 		await addressManager.setAddressInAddressBook('SpeedMarketsAMMCreator', creator.address);

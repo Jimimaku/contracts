@@ -61,6 +61,7 @@ contract('SpeedMarketsFreebetsIntegration', (accounts) => {
 			await speedMarketsAMMCreator.initialize(owner, addressManager.address);
 			await speedMarketsAMMCreator.setMaxCreationDelay(300); // 5 minutes
 			await speedMarketsAMMCreator.setStrikeTimeEnabled(true);
+			await speedMarketsAMMCreator.setMaxQueueSize(255);
 
 			// Update address manager with creator
 			await addressManager.setAddressInAddressBook(
