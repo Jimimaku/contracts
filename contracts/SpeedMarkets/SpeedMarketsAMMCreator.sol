@@ -582,7 +582,7 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
             bytes32 requiredFeedId = iSpeedMarketsAMM.assetToChainlinkId(_asset);
 
             bytes memory unverifiedReport;
-            for (uint i = 0; i < _unverifiedReports.length; i++) {
+            for (uint8 i = 0; i < _unverifiedReports.length; i++) {
                 (, bytes memory reportData) = abi.decode(_unverifiedReports[i], (bytes32[3], bytes));
                 ChainlinkStructs.ReportV3 memory report = abi.decode(reportData, (ChainlinkStructs.ReportV3));
                 if (report.feedId == requiredFeedId) {
