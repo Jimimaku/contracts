@@ -873,6 +873,11 @@
         "internalType": "address[]",
         "name": "_users",
         "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "_createdAtArray",
+        "type": "uint256[]"
       }
     ],
     "name": "deletePendingSpeedMarkets",

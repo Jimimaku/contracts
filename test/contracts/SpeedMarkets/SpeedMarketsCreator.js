@@ -974,17 +974,22 @@ contract('SpeedMarketsAMMCreator', (accounts) => {
 				BUYIN_AMOUNT
 			);
 
-			const pendingSizeBefore = Number(await creator.getPendingSpeedMarketsSize());
+			let pendingSizeBefore = Number(await creator.getPendingSpeedMarketsSize());
 			await creator.addPendingSpeedMarket(pendingSpeedParams, { from: user });
 			await creator.addPendingSpeedMarket(pendingSpeedParams, { from: user_2 });
 			await creator.addPendingSpeedMarket(pendingSpeedParams, { from: user_3 });
 
 			let pendingSize = Number(await creator.getPendingSpeedMarketsSize());
-			assert.equal(pendingSize, pendingSizeBefore + 3, 'Should add 3 pending speed markets!');
+			assert.equal(
+				pendingSize,
+				pendingSize - pendingSizeBefore,
+				`Should add ${pendingSize - pendingSizeBefore} pending speed markets!`
+			);
 
-			await creator.deletePendingSpeedMarkets(false, [user_2], { from: user });
+			pendingSizeBefore = pendingSize;
+			await creator.deletePendingSpeedMarkets(false, [user_2], [], { from: user });
 			pendingSize = Number(await creator.getPendingSpeedMarketsSize());
-			assert.equal(pendingSize, pendingSizeBefore + 2, 'Should remove 1 pending speed market!');
+			assert.equal(pendingSize, pendingSizeBefore - 1, 'Should remove 1 pending speed market!');
 
 			const pending_1 = await creator.pendingSpeedMarkets(0);
 			const pending_2 = await creator.pendingSpeedMarkets(1);
@@ -1002,7 +1007,12 @@ contract('SpeedMarketsAMMCreator', (accounts) => {
 				'Should return existing user 3'
 			);
 
-			await creator.deletePendingSpeedMarkets(true, [], { from: user });
+			pendingSizeBefore = pendingSize;
+			await creator.deletePendingSpeedMarkets(false, [], [pending_2.createdAt], { from: user });
+			pendingSize = Number(await creator.getPendingSpeedMarketsSize());
+			assert.equal(pendingSize, pendingSizeBefore - 1, 'Should remove 1 pending speed market!');
+
+			await creator.deletePendingSpeedMarkets(true, [], [], { from: user });
 			pendingSize = Number(await creator.getPendingSpeedMarketsSize());
 			assert.equal(pendingSize, 0, 'Should remove all pending speed markets!');
 		});

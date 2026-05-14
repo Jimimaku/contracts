@@ -261,10 +261,15 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
     }
 
     /// @notice Deletes pending speed markets.
-    /// @dev Can delete all markets or only those for specific users.
-    /// @param _all If true, deletes all pending markets. If false, deletes only markets for `_users`.
+    /// @dev Can delete all markets or only those for specific users or created at specific times.
+    /// @param _all If true, deletes all pending markets. If false, deletes markets for users in `_users` or created at times in `_createdAtArray`.
     /// @param _users An array of addresses whose pending markets should be removed. Ignored if `_all` is true.
-    function deletePendingSpeedMarkets(bool _all, address[] calldata _users) external isAddressWhitelisted {
+    /// @param _createdAtArray An array of createdAt times whose pending markets should be removed. Ignored if `_all` is true.
+    function deletePendingSpeedMarkets(
+        bool _all,
+        address[] calldata _users,
+        uint256[] calldata _createdAtArray
+    ) external isAddressWhitelisted {
         if (_all) {
             delete pendingSpeedMarkets;
             return;
@@ -277,6 +282,14 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
                 if (pendingSpeedMarkets[i].user == _users[j]) {
                     shouldDelete = true;
                     break;
+                }
+            }
+            if (!shouldDelete) {
+                for (uint k = 0; k < _createdAtArray.length; k++) {
+                    if (pendingSpeedMarkets[i].createdAt == _createdAtArray[k]) {
+                        shouldDelete = true;
+                        break;
+                    }
                 }
             }
 
@@ -629,7 +642,7 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
 
     /// @notice get pending chained speed markets data
     function getPendingChainedSpeedMarkets() external view returns (PendingChainedSpeedMarket[] memory pendingMarkets) {
-        pendingMarkets = new PendingChainedSpeedMarket[](pendingSpeedMarkets.length);
+        pendingMarkets = new PendingChainedSpeedMarket[](pendingChainedSpeedMarkets.length);
         for (uint i = 0; i < pendingChainedSpeedMarkets.length; i++) {
             pendingMarkets[i] = pendingChainedSpeedMarkets[i];
         }
