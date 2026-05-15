@@ -127,6 +127,7 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
     }
 
     function _addPendingSpeedMarket(SpeedMarketParams calldata _params) internal returns (bytes32 requestId) {
+        require(_maxQueueSize > 0, "Max queue size not set");
         require(pendingSpeedMarkets.length < _maxQueueSize, "Max queue size exceeded");
         require(_isStrikeTimeEnabled || _params.strikeTime == 0, "Strike time not supported");
 
@@ -277,20 +278,31 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
 
         uint i = 0;
         while (i < pendingSpeedMarkets.length) {
-            bool shouldDelete = false;
+            bool deleteByUser = false;
+            bool deleteByCreatedAt = false;
+
             for (uint j = 0; j < _users.length; j++) {
                 if (pendingSpeedMarkets[i].user == _users[j]) {
-                    shouldDelete = true;
+                    deleteByUser = true;
                     break;
                 }
             }
-            if (!shouldDelete) {
-                for (uint k = 0; k < _createdAtArray.length; k++) {
-                    if (pendingSpeedMarkets[i].createdAt == _createdAtArray[k]) {
-                        shouldDelete = true;
-                        break;
-                    }
+            for (uint k = 0; k < _createdAtArray.length; k++) {
+                if (pendingSpeedMarkets[i].createdAt == _createdAtArray[k]) {
+                    deleteByCreatedAt = true;
+                    break;
                 }
+            }
+
+            bool shouldDelete;
+            if (_users.length > 0 && _createdAtArray.length > 0) {
+                shouldDelete = deleteByUser && deleteByCreatedAt;
+            } else if (_users.length > 0) {
+                shouldDelete = deleteByUser;
+            } else if (_createdAtArray.length > 0) {
+                shouldDelete = deleteByCreatedAt;
+            } else {
+                shouldDelete = false;
             }
 
             if (shouldDelete) {
@@ -317,6 +329,7 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
     }
 
     function _addPendingChainedSpeedMarket(ChainedSpeedMarketParams calldata _params) internal returns (bytes32 requestId) {
+        require(_maxQueueSize > 0, "Max queue size not set");
         require(pendingChainedSpeedMarkets.length < _maxQueueSize, "Max queue size exceeded");
 
         PendingChainedSpeedMarket memory pendingChainedSpeedMarket = PendingChainedSpeedMarket(
@@ -469,7 +482,7 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
         if (_strikeTime == 0) {
             if (_params.allowedDeltas.length > 0) {
                 for (uint i = 0; i < _params.allowedDeltas.length; i++) {
-                    if (_delta == _params.allowedDeltas[i]) {
+                    if (_delta == _params.allowedDeltas[i] && _delta >= _params.minDelta) {
                         return false;
                     }
                 }
@@ -672,6 +685,7 @@ contract SpeedMarketsAMMCreator is Initializable, ProxyOwned, ProxyPausable, Pro
 
     /// @notice Set max queue size
     function setMaxQueueSize(uint _maxQueueSizeParam) external onlyOwner {
+        require(_maxQueueSizeParam > 0, "Max queue size has to be greater than 0");
         _maxQueueSize = _maxQueueSizeParam;
         emit SetMaxQueueSize(_maxQueueSizeParam);
     }
