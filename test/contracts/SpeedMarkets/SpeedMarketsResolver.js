@@ -153,6 +153,7 @@ contract('SpeedMarketsAMMResolver', (accounts) => {
 		await creator.initialize(owner, addressManager.address);
 		await creator.setAddressManager(addressManager.address);
 		await creator.setMaxCreationDelay(5); // 5s
+		await creator.setMaxQueueSize(255);
 		await creator.addToWhitelist(user, true);
 
 		await addressManager.setAddressInAddressBook('SpeedMarketsAMMCreator', creator.address);
@@ -202,10 +203,13 @@ contract('SpeedMarketsAMMResolver', (accounts) => {
 
 			await exoticUSD.approve(speedMarketsAMM.address, toUnit(100), { from: user });
 			await creator.addPendingSpeedMarket(pendingSpeedParams, { from: user });
-			await creator.createFromPendingSpeedMarkets([oracleSource.Pyth, [priceFeedUpdateData], 0], {
-				value: fee,
-				from: user,
-			});
+			await creator.createFromPendingSpeedMarkets(
+				[oracleSource.Pyth, [priceFeedUpdateData], 0, []],
+				{
+					value: fee,
+					from: user,
+				}
+			);
 
 			let activeMarkets = await speedMarketsAMM.activeMarkets(0, 10);
 			const market = activeMarkets[0];
@@ -248,9 +252,12 @@ contract('SpeedMarketsAMMResolver', (accounts) => {
 
 			await exoticUSD.approve(speedMarketsAMM.address, toUnit(100), { from: user });
 			await creator.addPendingSpeedMarket(pendingSpeedParams, { from: user });
-			await creator.createFromPendingSpeedMarkets([oracleSource.Chainlink, [unverifiedReport], 0], {
-				from: user,
-			});
+			await creator.createFromPendingSpeedMarkets(
+				[oracleSource.Chainlink, [unverifiedReport], 0, []],
+				{
+					from: user,
+				}
+			);
 
 			let activeMarkets = await speedMarketsAMM.activeMarkets(0, 10);
 			const market = activeMarkets[0];
